@@ -26,7 +26,7 @@ june@dev ~ % cat stack.txt
 
 | area | tools |
 | :--- | :--- |
-| **Languages** | `Go` `TypeScript` `Java` `Dart` `SQL` `Bash` |
+| **Languages** | `Go` `TypeScript` `SQL` `Bash` |
 | **Backend** | Gin · Hono · Cloudflare Workers · SQLite |
 | **Frontend** | Vue 3 · React · Vite · Tailwind |
 | **Mobile** | Flutter |

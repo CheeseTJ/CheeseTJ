@@ -27,7 +27,7 @@ LINES = [
     ("Name:", ["JuneT"]),
     ("Born:", ["2002.06.09"]),
     ("Work:", ["Full-stack Developer"]),
-    ("Langs:", ["Go, TypeScript,", "Vue, React, Java,", "Dart, SQL"]),
+    ("Langs:", ["Go, TypeScript,", "Vue, React, SQL"]),
     ("Focus:", ["Frontend, Backend"]),
     ("Status:", ["always building"]),
 ]
