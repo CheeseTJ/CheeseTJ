@@ -43,8 +43,8 @@ june@dev ~ % cat stack.txt
 **🧩 [Imgbed](https://github.com/CheeseTJ/Imgbed-api)**
 Self-hosted image bed — Go API + Vue console, R2 storage.
 
-**📚 [JMReader](https://github.com/CheeseTJ/JMReader-web)**
-Reader frontend on Vue 3, paired with a Go backend.
+**� [Ucenter](https://github.com/CheeseTJ/Ucenter-worker)**
+Unified identity center — accounts, devices, tokens, invites.
 
 **🎵 [Music](https://github.com/CheeseTJ/Music-api)**
 Unified music API (search / url / lyrics / rank) on Hono.
