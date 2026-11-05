@@ -30,8 +30,8 @@ LINES = [
     ("OS:", ["macOS"]),
     ("Editor:", ["VS Code"]),
     ("Langs:", ["Go, TypeScript,", "Vue, React, Java,", "Dart, SQL"]),
-    ("Skills:", ["Backend, Cloud", "Native, Infra"]),
-    ("Status:", ["building things"]),
+    ("Focus:", ["Frontend, Backend"]),
+    ("Status:", ["always building"]),
 ]
 
 random.seed(7)

@@ -9,9 +9,9 @@
 </p>
 
 <p>
-  <img alt="focus" src="https://img.shields.io/badge/focus-backend%20%26%20cloud%20native-1f6f3f?style=flat-square&labelColor=0b1a10" />
+  <img alt="focus" src="https://img.shields.io/badge/focus-frontend_%26_backend-1f6f3f?style=flat-square&labelColor=0b1a10" />
   <img alt="status" src="https://img.shields.io/badge/status-shipping-3fd97a?style=flat-square&labelColor=0b1a10" />
-  <img alt="mtu" src="https://img.shields.io/badge/uptime-self--hosted-1f6f3f?style=flat-square&labelColor=0b1a10" />
+  <img alt="hosting" src="https://img.shields.io/badge/hosting-self--hosted-1f6f3f?style=flat-square&labelColor=0b1a10" />
 </p>
 
 </div>
