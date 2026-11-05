@@ -26,9 +26,7 @@ RAMP = " ░▒▓█"            # dark -> bright (block ramp, CRT mosaic feel)
 LINES = [
     ("Name:", ["JuneT"]),
     ("Born:", ["2002.06.09"]),
-    ("Work:", ["Indie Hacker"]),
-    ("OS:", ["macOS"]),
-    ("Editor:", ["VS Code"]),
+    ("Work:", ["Full-stack Developer"]),
     ("Langs:", ["Go, TypeScript,", "Vue, React, Java,", "Dart, SQL"]),
     ("Focus:", ["Frontend, Backend"]),
     ("Status:", ["always building"]),
@@ -117,28 +115,37 @@ def draw_scanlines(canvas: Image.Image, box) -> None:
     d = ImageDraw.Draw(canvas, "RGBA")
     for y in range(y0, y1, 3):
         d.line([(x0, y), (x1, y)], fill=(0, 0, 0, 90))
-    # slow horizontal hum bar
-    for i in range(26):
-        a = int(26 * (1 - i / 26))
+    # very slow horizontal hum bar, portrait only and barely there
+    for i in range(18):
+        a = int(9 * (1 - i / 18))
         y = y0 + int((y1 - y0) * 0.34) + i
-        d.line([(x0, y), (x1, y)], fill=(120, 255, 150, a))
+        d.line([(x0, y), (x1 - 260, y)], fill=(120, 255, 150, a))
 
 
 def draw_text(canvas: Image.Image) -> None:
     f = ImageFont.truetype(FONT_MONO, 21)
     lab_w = 118
     line_step = 27
+    gap = 32
+
+    # vertically balance the block inside the frame
+    block_h = line_step * sum(len(v) for _, v in LINES) + gap * (len(LINES) - 1)
+    y0 = P_Y + max(14, (P_H - block_h - 78) // 2)
+
+    def walk(draw, mode: str) -> int:
+        y = y0
+        for label, values in LINES:
+            draw.text((T_X, y), label, font=f, anchor="la",
+                      fill=140 if mode == "glow" else green(0.62))
+            for i, val in enumerate(values):
+                draw.text((T_X + lab_w, y + i * line_step), val, font=f, anchor="la",
+                          fill=255 if mode == "glow" else (205, 255, 212))
+            y += line_step * len(values) + gap
+        return y - gap
 
     # ---- pass 1: glow layer ----
     glow_layer = Image.new("L", canvas.size, 0)
-    gd = ImageDraw.Draw(glow_layer)
-    y = P_Y + 16
-    for label, values in LINES:
-        gd.text((T_X, y), label, font=f, anchor="la", fill=140)
-        for i, val in enumerate(values):
-            gd.text((T_X + lab_w, y + i * line_step), val, font=f, anchor="la", fill=255)
-        y += line_step * len(values) + 14
-
+    walk(ImageDraw.Draw(glow_layer), "glow")
     glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(8))
     glow_rgb = Image.new("RGB", canvas.size, (0, 0, 0))
     glow_rgb.paste(Image.new("RGB", canvas.size, (60, 255, 120)), (0, 0), glow_layer)
@@ -146,23 +153,19 @@ def draw_text(canvas: Image.Image) -> None:
 
     # ---- pass 2: crisp text on top ----
     d = ImageDraw.Draw(canvas)
-    y = P_Y + 16
-    for label, values in LINES:
-        d.text((T_X, y), label, font=f, fill=green(0.62), anchor="la")
-        for i, val in enumerate(values):
-            d.text((T_X + lab_w, y + i * line_step), val, font=f, fill=(205, 255, 212), anchor="la")
-        y += line_step * len(values) + 14
+    end_y = walk(d, "crisp")
 
-    # decorative brightness swatches
-    sw_y = P_Y + P_H - 58
+    # decorative brightness swatches, right under the text block
+    sw_y = end_y + 46
     sw_x = T_X + lab_w
     for i in range(8):
         v = i / 7
-        d.rectangle([sw_x + i * 30, sw_y, sw_x + i * 30 + 24, sw_y + 20], fill=green(0.25 + v * 0.75))
+        d.rectangle([sw_x + i * 30, sw_y, sw_x + i * 30 + 24, sw_y + 20],
+                    fill=green(0.25 + v * 0.75))
 
     # blinking-cursor block at the end of the last line
-    y += 4
-    d.rectangle([T_X + lab_w, y, T_X + lab_w + 12, y + 20], fill=green(0.95))
+    cy = end_y + 4
+    d.rectangle([T_X + lab_w, cy, T_X + lab_w + 12, cy + 20], fill=green(0.95))
 
 
 def vignette(canvas: Image.Image) -> None:
