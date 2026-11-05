@@ -6,7 +6,7 @@ Usage: python3 tools/make_banner.py <avatar.(png|jpg)> <out.png>
 import random
 import sys
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps, ImageStat
 
 FONT_MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
 
@@ -46,6 +46,19 @@ def green(level: float) -> tuple[int, int, int]:
 
 def portrait_grid(src: Image.Image) -> list[list[float]]:
     g = ImageOps.grayscale(src)
+
+    # polarity: a CRT draws light strokes on black. Light-background artwork
+    # (line art, white-bg illustrations) must be inverted or it reads as a negative.
+    w, h = g.size
+    border = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(border).rectangle([0, 0, w - 1, h - 1], fill=255)
+    ImageDraw.Draw(border).rectangle(
+        [int(w * 0.08), int(h * 0.08), int(w * 0.92), int(h * 0.92)], fill=0
+    )
+    stat = ImageStat.Stat(g, border)
+    if stat.mean[0] > 120:
+        g = ImageOps.invert(g)
+
     g = ImageOps.autocontrast(g, cutoff=1)
     # boost local structure so features survive downsampling
     g = g.filter(ImageFilter.UnsharpMask(radius=6, percent=180, threshold=2))
@@ -190,14 +203,13 @@ def main() -> None:
     canvas = Image.new("RGB", (W, H), BG)
     src = Image.open(src_path)
 
-    # square-crop, biased to the top so faces aren't cut, and trim the
-    # bottom band (community watermarks sit there on most avatars)
+    # square-crop: keep the upper-middle region, which drops the signature
+    # band community artwork usually carries along the bottom edge.
     s = min(src.size)
-    left = (src.width - s) // 2
-    top = int((src.height - s) * 0.12)
-    usable_h = int(s * 0.90)
-    src = src.crop((left, top, left + s, top + usable_h))
-    src = src.resize((s, s), Image.LANCZOS)
+    box = int(s * 0.72)
+    cx = (src.width - box) // 2
+    cy = int(src.height * 0.02)
+    src = src.crop((cx, cy, cx + box, cy + box)).resize((s, s), Image.LANCZOS)
 
     draw_portrait(canvas, portrait_grid(src))
     draw_text(canvas)
